@@ -27,7 +27,7 @@ pipeline {
     stage('Test Docker') {
       agent {
         docker {
-          image 'cypress/browsers:node20.10.0-chrome124'
+          image 'cypress/included:14.3.0'
           args '-u root:root'
         }
       }
