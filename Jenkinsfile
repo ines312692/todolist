@@ -20,6 +20,8 @@ pipeline {
         sh 'npm install'
         sh 'npm run build'
         sh 'ls -R dist'
+        // Stash the build artifacts to use in later stages
+        stash includes: 'dist/**/*', name: 'build-artifacts'
       }
     }
 
@@ -32,10 +34,12 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
+        // Unstash the build artifacts
+        unstash 'build-artifacts'
         dir("${env.WORKSPACE}") {
           sh "docker build -t ${IMAGE_NAME}:latest ."
-    }
-  }
+        }
+      }
     }
 
     stage('Deploy') {
@@ -61,6 +65,8 @@ pipeline {
     }
     always {
       echo 'Pipeline execution completed.'
+      // Clean up stashed files
+      sh 'rm -rf dist/ || true'
     }
   }
 }
