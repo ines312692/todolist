@@ -8,18 +8,13 @@ pipeline {
     CONTAINER_PORT = "80"
   }
 
-  stages {
+   stages {
     stage('Build Angular App') {
-      agent {
-        docker {
-          image 'node:20-alpine'
-          args '-v $PWD:/app -w /app'
-        }
-      }
       steps {
-        echo 'Installing dependencies and building Angular app...'
-        sh 'npm install'
-        sh 'npm run build'
+        echo 'Building Angular app using Node Docker manually...'
+        sh '''
+          docker run --rm -v "$PWD":/app -w /app node:20-alpine sh -c "npm install && npm run build"
+        '''
         sh 'ls -R dist'
       }
     }
