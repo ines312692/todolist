@@ -17,17 +17,11 @@ pipeline {
       steps {
         echo 'Installing npm dependencies...'
         sh 'npm install'
-        sh 'npm run build'
-        sh 'ls -R dist'
+
       }
     }
 
     stage('Build Angular App') {
-      agent {
-        docker {
-          image 'node:20-alpine'
-        }
-      }
       steps {
         echo 'Building Angular app...'
         sh 'npm run build'
