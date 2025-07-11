@@ -20,21 +20,26 @@ pipeline {
         sh 'npm install'
         sh 'npm run build'
         sh 'ls -R dist'
-        // Stash the build artifacts to use in later stages
         stash includes: 'dist/**/*', name: 'build-artifacts'
       }
     }
 
     stage('Test Docker') {
+      agent {
+        docker {
+          image 'cypress/browsers:node20.10.0-chrome124'
+          args '-u root:root'
+        }
+      }
       steps {
-        echo 'Testing docker CLI...'
-        sh 'docker version'
+        echo 'Running Angular unit tests...'
+        sh 'npm ci'
+        sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        // Unstash the build artifacts
         unstash 'build-artifacts'
         dir("${env.WORKSPACE}") {
           sh "docker build -t ${IMAGE_NAME}:latest ."
@@ -65,7 +70,6 @@ pipeline {
     }
     always {
       echo 'Pipeline execution completed.'
-      // Clean up stashed files
       sh 'rm -rf dist/ || true'
     }
   }
