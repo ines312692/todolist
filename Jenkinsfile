@@ -45,7 +45,6 @@ pipeline {
 
       steps {
         echo 'Building Docker image...'
-        sh 'ls -l dist'
         sh "docker build -t ${IMAGE_NAME}:latest ."
       }
     }
