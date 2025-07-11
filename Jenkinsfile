@@ -33,9 +33,11 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        echo 'Building Docker image...'
-        sh "docker build -t ${IMAGE_NAME}:latest ."
-      }
+        dir("${env.WORKSPACE}") {
+          sh "ls -R dist" // pour confirmer que dist est bien là
+          sh "docker build -t ${IMAGE_NAME}:latest ."
+    }
+  }
     }
 
     stage('Deploy') {
