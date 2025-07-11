@@ -18,6 +18,7 @@ pipeline {
         echo 'Installing npm dependencies...'
         sh 'npm install'
         sh 'npm run build'
+        sh 'ls -R dist'
       }
     }
 
